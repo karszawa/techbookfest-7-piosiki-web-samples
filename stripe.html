@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTC-8" />
+    <title>Web Stripe Form</title>
+  </head>
+  <body>
+    <form action="/pay" method="post" id="payment-form">
+      <label for="card-element">
+        Cat Pay Form
+      </label>
+
+      <div id="card-element"></div>
+
+      <div id="card-errors" role="alert"></div>
+
+      <button>Pay</button>
+    </form>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      const stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
+      const elements = stripe.elements();
+
+      const card = elements.create("card");
+
+      card.mount("#card-element");
+
+      card.addEventListener("change", ({ error }) => {
+        const displayError = document.getElementById("card-errors");
+
+        if (error) {
+          displayError.textContext = error.message;
+        } else {
+          displayError.textContext = "";
+        }
+      });
+
+      const form = document.getElementById("payment-form");
+
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const { token, error } = await stripe.createToken(card);
+
+        if (error) {
+          // Inform the customer that there was an error.
+          const errorElement = document.getElementById("card-errors");
+          errorElement.textContent = error.message;
+        } else {
+          console.log(token);
+          // Send the token to your server.
+          // stripeTokenHandler(token);
+        }
+      });
+    </script>
+
+    <style>
+      form {
+        width: 400px;
+      }
+
+      .StripeElement {
+        box-sizing: border-box;
+
+        height: 40px;
+
+        padding: 10px 12px;
+
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background-color: white;
+
+        box-shadow: 0 1px 3px 0 #e6ebf1;
+        -webkit-transition: box-shadow 150ms ease;
+        transition: box-shadow 150ms ease;
+      }
+
+      .StripeElement--focus {
+        box-shadow: 0 1px 3px 0 #cfd7df;
+      }
+
+      .StripeElement--invalid {
+        border-color: #fa755a;
+      }
+
+      .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+      }
+    </style>
+  </body>
+</html>

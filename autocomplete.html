@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simplest form</title>
+  </head>
+  <body>
+    <h1>Cat Pay</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <td>Item</td>
+          <td>Price</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ちゅーる</td>
+          <td>¥1200</td>
+        </tr>
+        <tr>
+          <td>技術書</td>
+          <td>¥100</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <form action="/pay" method="POST">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <label for="name-on-card">Name on card</label>
+            </td>
+            <td>
+              <input
+                id="name-on-card"
+                required
+                placeholder="Full Name"
+                autocomplete="cc-name"
+              />
+            </td>
+          </tr>
+
+          <tr>
+            <td><label for="card-number">Card number</label></td>
+            <td>
+              <input id="card-number" required autocomplete="cc-number" />
+            </td>
+          </tr>
+
+          <tr>
+            <td><label for="expiry-date">Expiry date</label></td>
+            <td>
+              <input
+                id="expiry-date"
+                required
+                placeholder="MM/YYYY"
+                autocomplete="cc-exp"
+              />
+            </td>
+          </tr>
+
+          <tr>
+            <td><label for="security-code">Security code</label></td>
+            <td><input id="security-code" autocomplete="cc-csc" /></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <input type="submit" value="Pay" />
+    </form>
+  </body>
+</html>

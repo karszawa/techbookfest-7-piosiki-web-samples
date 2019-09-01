@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simplest form</title>
+  </head>
+  <body>
+    <h1>Cat Pay</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <td>商品名</td>
+          <td>価格</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ちゅーる</td>
+          <td>1200円</td>
+        </tr>
+        <tr>
+          <td>技術書</td>
+          <td>100円</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button onclick="onClickPayButton()">Pay</button>
+
+    <script>
+      function onClickPayButton() {
+        const supportedPaymentMethods = [
+          {
+            supportedMethods: "basic-card",
+            data: {
+              supportedNetworks: ["visa", "mastercard", "amex"]
+            },
+            supportedTypes: ["credit", "debit"]
+          },
+          {
+            supportedMethods: "https://apple.com/apple-pay",
+            data: {
+              version: 3,
+              merchantIdentifier: "merchant.com.example",
+              merchantCapabilities: [
+                "supports3DS",
+                "supportsCredit",
+                "supportsDebit"
+              ],
+              supportedNetworks: ["amex", "discover", "masterCard", "visa"],
+              countryCode: "US"
+            }
+          }
+        ];
+
+        const shippingOptions = [
+          {
+            id: "normal",
+            label: "通常配送",
+            amount: {
+              currency: "JPY",
+              value: "370"
+            }
+          },
+          {
+            id: "express",
+            label: "即日配送",
+            amount: {
+              currency: "JPY",
+              value: "500"
+            }
+          }
+        ];
+
+        const paymentDetails = {
+          total: {
+            label: "Total",
+            amount: {
+              currency: "JPY",
+              value: "1200"
+            }
+          },
+          displayItems: [
+            {
+              label: "techbookfest-pioski-book",
+              amount: {
+                currency: "JPY",
+                value: 1200
+              }
+            }
+          ],
+          shippingOptions
+        };
+
+        const options = {
+          requestShipping: true
+        };
+
+        const paymentRequest = new PaymentRequest(
+          supportedPaymentMethods,
+          paymentDetails,
+          options
+        );
+
+        paymentRequest.addEventListener("shippingaddresschange", event => {
+          const prInstance = event.target;
+
+          // if (prInstance.shippingAddress.country === "JP") {
+          //   event.updateWith({
+          //     error: "日本以外の住所には発送できません"
+          //   });
+          // }
+
+          event.updateWith({});
+        });
+
+        paymentRequest.addEventListener("shippingoptionchange", event => {
+          const prInstance = event.target;
+          const selectedId = prInstance.shippingOption;
+
+          shippingOptions.forEach(option => {
+            option.selected = option.id === selectedId;
+          });
+
+          event.updateWith({
+            shippingOptions
+          });
+        });
+
+        paymentRequest.addEventListener("onmerchantvalidation", event => {
+          event.complete();
+        });
+
+        paymentRequest.show().then(paymentResponse => {
+          console.log(paymentResponse);
+          return paymentResponse.complete();
+        });
+      }
+    </script>
+  </body>
+</html>
